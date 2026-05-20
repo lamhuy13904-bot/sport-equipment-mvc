@@ -1,0 +1,14 @@
+@model EquipmentStatsViewModel
+<div class="container mt-4">
+    <h2 class="text-success mb-3">Thống kê kho đồ dùng</h2>
+    <ul class="list-group" style="max-width: 400px;">
+        <li class="list-group-item d-flex justify-content-between align-items-center">Tổng số mã thiết bị: <strong>@Model.TotalItems</strong></li>
+        <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-danger">Số thiết bị hết hàng: <strong>@Model.OutOfStockCount</strong></li>
+        <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-warning">Số thiết bị sắp hết: <strong>@Model.LowStockCount</strong></li>
+    </ul>
+    @if(Model.OutOfStockCount > 0)
+    {
+        <div class="alert alert-danger mt-3" style="max-width: 400px;">⚠️ Cảnh báo: Đang có sản phẩm bị hết hàng!</div>
+    }
+    <a href="/Equipments" class="btn btn-secondary mt-3">Quay lại trang chính</a>
+</div>

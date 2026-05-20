@@ -1,0 +1,13 @@
+@model EquipmentDetailViewModel
+<div class="container mt-4">
+    <div class="card p-4 shadow-sm" style="max-width: 500px;">
+        <h3 class="text-primary">@Model.Name</h3>
+        <p><strong>Thương hiệu:</strong> @Model.Brand</p>
+        <p><strong>Số lượng hiện tại:</strong> @Model.Quantity sản phẩm</p>
+        <p><strong>Hạn mức tối thiểu:</strong> @Model.MinStock sản phẩm</p>
+        <div class="alert alert-secondary mt-3">
+            <strong>Gợi ý:</strong> @Model.Suggestion
+        </div>
+        <a href="/Equipments" class="btn btn-outline-secondary mt-2">Quay lại danh sách</a>
+    </div>
+</div>
