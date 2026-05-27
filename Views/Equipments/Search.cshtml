@@ -1,0 +1,46 @@
+@model EquipmentSearchViewModel
+@{
+    ViewData["Title"] = "Tìm kiếm thiết bị";
+}
+
+<div class="page-header">
+    <div>
+        <h2 class="page-title">Tìm kiếm dụng cụ</h2>
+        <p class="page-description">Dùng Query String Form GET để lọc thiết bị.</p>
+    </div>
+    <a class="btn btn-light" asp-controller="Equipments" asp-action="Index">Về danh sách</a>
+</div>
+
+<div class="form-layout">
+    <form class="form-box" asp-controller="Equipments" asp-action="Search" method="get">
+        <div class="form-group">
+            <label asp-for="Keyword">Từ khóa tìm kiếm (Tên/Hãng/Mã)</label>
+            <input asp-for="Keyword" class="form-control" placeholder="Ví dụ: Nike, tạ, giày..." />
+        </div>
+        <div class="form-group">
+            <label asp-for="MinPrice">Mức giá tối thiểu (VND)</label>
+            <input asp-for="MinPrice" class="form-control" type="number" placeholder="Ví dụ: 500000" />
+        </div>
+        <button class="btn" type="submit">Tìm kiếm ngay</button>
+        <a class="btn btn-secondary" asp-controller="Equipments" asp-action="Search">Xóa bộ lọc</a>
+    </form>
+
+    <div>
+        <h3>Kết quả tìm kiếm</h3>
+        <p>Từ khóa: <strong>@(string.IsNullOrEmpty(Model.Keyword) ? "Trống" : Model.Keyword)</strong> | Giá tối thiểu: <strong>@Model.MinPrice</strong></p>
+        
+        @if (Model.Results.Count == 0)
+        {
+            <div style="background: #fef08a; padding: 15px; border-radius: 8px; color: #854d0e;">Không tìm thấy dụng cụ nào phù hợp với tiêu chí của bạn.</div>
+        }
+        else
+        {
+            <div class="product-grid" style="grid-template-columns: 1fr;">
+                @foreach (var item in Model.Results)
+                {
+                    <partial name="_EquipmentCard" model="item" />
+                }
+            </div>
+        }
+    </div>
+</div>

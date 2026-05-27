@@ -1,24 +1,39 @@
 @model List<EquipmentListItemViewModel>
-<div class="container mt-4">
-    <h2>Danh mục thiết bị thể thao</h2>
-    <a href="/Equipments/Stats" class="btn btn-info text-white my-2">Xem thống kê kho</a>
-    <table class="table table-striped table-bordered mt-2">
-        <thead class="table-dark">
-            <tr><th>Mã</th><th>Tên thiết bị</th><th>Hãng</th><th>Giá bán</th><th>SL</th><th>Trạng thái</th><th>Hành động</th></tr>
-        </thead>
-        <tbody>
-            @foreach(var item in Model)
-            {
-                <tr>
-                    <td>@item.Code</td>
-                    <td>@item.Name</td>
-                    <td>@item.Brand</td>
-                    <td class="text-danger fw-bold">@item.PriceText</td>
-                    <td>@item.Quantity</td>
-                    <td>@item.Status</td>
-                    <td><a href="/Equipments/Detail/@item.Id" class="btn btn-sm btn-primary">Chi tiết</a></td>
-                </tr>
-            }
-        </tbody>
-    </table>
+@{
+    ViewData["Title"] = "Danh mục thiết bị";
+    var totalItems = Model.Count;
+}
+
+<div class="page-header">
+    <div>
+        <h2 class="page-title">Danh Mục Dụng Cụ Thể Thao</h2>
+        <p class="page-description">Giao diện danh sách được tổ chức lại bằng Layout và Partial View (Card).</p>
+    </div>
+    <div>
+        <a class="btn btn-secondary" asp-controller="Equipments" asp-action="Search">Tìm kiếm</a>
+        <a class="btn" asp-controller="Equipments" asp-action="Create">Thêm mới</a>
+    </div>
 </div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="success-box">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<p style="margin-bottom: 20px; font-weight: bold; color: #475569;">Tổng số dụng cụ hiện có: @totalItems</p>
+
+@if (Model.Count == 0)
+{
+    <p>Kho đang trống.</p>
+}
+else
+{
+    <div class="product-grid">
+        @foreach (var item in Model)
+        {
+            <partial name="_EquipmentCard" model="item" />
+        }
+    </div>
+}
