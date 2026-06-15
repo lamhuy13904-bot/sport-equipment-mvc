@@ -1,46 +1,90 @@
-@model EquipmentSearchViewModel
+@model SportEquipment.Mvc.ViewModels.EquipmentFilterViewModel
+
 @{
-    ViewData["Title"] = "Tìm kiếm thiết bị";
+    ViewData["Title"] = "Tìm kiếm & Lọc Dụng Cụ";
 }
 
-<div class="page-header">
-    <div>
-        <h2 class="page-title">Tìm kiếm dụng cụ</h2>
-        <p class="page-description">Dùng Query String Form GET để lọc thiết bị.</p>
+<h2 class="mb-4">Tìm kiếm & Lọc Dụng Cụ Thể Thao</h2>
+
+<form method="get" asp-controller="Equipments" asp-action="Search" class="row g-3 mb-4 p-3 bg-light border rounded">
+    <div class="col-md-3">
+        <label class="form-label fw-bold">Từ khóa</label>
+        <input type="text" name="keyword" class="form-control" placeholder="Nhập tên, mã SP..." value="@Context.Request.Query["keyword"]" />
     </div>
-    <a class="btn btn-light" asp-controller="Equipments" asp-action="Index">Về danh sách</a>
-</div>
-
-<div class="form-layout">
-    <form class="form-box" asp-controller="Equipments" asp-action="Search" method="get">
-        <div class="form-group">
-            <label asp-for="Keyword">Từ khóa tìm kiếm (Tên/Hãng/Mã)</label>
-            <input asp-for="Keyword" class="form-control" placeholder="Ví dụ: Nike, tạ, giày..." />
-        </div>
-        <div class="form-group">
-            <label asp-for="MinPrice">Mức giá tối thiểu (VND)</label>
-            <input asp-for="MinPrice" class="form-control" type="number" placeholder="Ví dụ: 500000" />
-        </div>
-        <button class="btn" type="submit">Tìm kiếm ngay</button>
-        <a class="btn btn-secondary" asp-controller="Equipments" asp-action="Search">Xóa bộ lọc</a>
-    </form>
-
-    <div>
-        <h3>Kết quả tìm kiếm</h3>
-        <p>Từ khóa: <strong>@(string.IsNullOrEmpty(Model.Keyword) ? "Trống" : Model.Keyword)</strong> | Giá tối thiểu: <strong>@Model.MinPrice</strong></p>
-        
-        @if (Model.Results.Count == 0)
-        {
-            <div style="background: #fef08a; padding: 15px; border-radius: 8px; color: #854d0e;">Không tìm thấy dụng cụ nào phù hợp với tiêu chí của bạn.</div>
-        }
-        else
-        {
-            <div class="product-grid" style="grid-template-columns: 1fr;">
-                @foreach (var item in Model.Results)
+    
+    <div class="col-md-3">
+        <label class="form-label fw-bold">Danh mục</label>
+        <select name="categoryId" class="form-select">
+            <option value="">-- Tất cả danh mục --</option>
+            @foreach (var cat in Model.Categories)
+            {
+                if (Model.SelectedCategoryId == cat.Id)
                 {
-                    <partial name="_EquipmentCard" model="item" />
+                    <option value="@cat.Id" selected>@cat.Name</option>
                 }
+                else
+                {
+                    <option value="@cat.Id">@cat.Name</option>
+                }
+            }
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <label class="form-label fw-bold">Giá từ</label>
+        <input type="number" name="minPrice" class="form-control" placeholder="VNĐ" value="@Model.MinPrice" />
+    </div>
+
+    <div class="col-md-2">
+        <label class="form-label fw-bold">Giá đến</label>
+        <input type="number" name="maxPrice" class="form-control" placeholder="VNĐ" value="@Model.MaxPrice" />
+    </div>
+
+    <div class="col-md-2 d-flex align-items-end">
+        <button type="submit" class="btn btn-primary w-100">
+            <i class="bi bi-search"></i> Lọc kết quả
+        </button>
+    </div>
+</form>
+
+<hr />
+
+@if (Model.Equipments.Any())
+{
+    <div class="row mt-3">
+        @foreach (var item in Model.Equipments)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">@item.Name</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            Mã: <strong>@item.Code</strong> | @item.CategoryName
+                        </h6>
+                        <ul class="list-unstyled mt-3">
+                            <li>Giá: <strong class="text-danger">@item.PriceText</strong></li>
+                            <li>Số lượng: <strong>@item.Quantity</strong></li>
+                            <li class="mt-2">
+                                Trạng thái: 
+                                @if(item.Status == "Sắp hết" || item.Status == "Hết hàng")
+                                {
+                                    <span class="badge bg-warning text-dark">@item.Status</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">@item.Status</span>
+                                }
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         }
     </div>
-</div>
+}
+else
+{
+    <div class="alert alert-warning mt-3" role="alert">
+        <strong>Opps!</strong> Không tìm thấy sản phẩm phù hợp. Vui lòng thử từ khóa hoặc khoảng giá khác.
+    </div>
+}
