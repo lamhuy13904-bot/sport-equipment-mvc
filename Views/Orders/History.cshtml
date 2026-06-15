@@ -1,0 +1,52 @@
+@model List<SportEquipment.Mvc.ViewModels.OrderHistoryViewModel>
+
+@{
+    ViewData["Title"] = "Lịch sử Xuất Kho";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-primary fw-bold">Lịch Sử Xuất Kho (Giao dịch)</h2>
+    <a asp-controller="Orders" asp-action="Create" class="btn btn-success fw-bold">
+        <i class="bi bi-plus-circle"></i> Tạo đơn xuất kho mới
+    </a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-warning text-center">Chưa có giao dịch xuất kho nào được thực hiện.</div>
+}
+else
+{
+    <div class="table-responsive shadow-sm rounded">
+        <table class="table table-hover table-bordered bg-white align-middle">
+            <thead class="table-dark text-center">
+                <tr>
+                    <th>Mã Đơn</th>
+                    <th>Thời gian</th>
+                    <th>Khách hàng / Người nhận</th>
+                    <th>Chi tiết xuất kho (Tên - SL)</th>
+                    <th>Tổng giá trị</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model)
+                {
+                    <tr>
+                        <td class="text-center fw-bold">#@order.OrderId.ToString("D4")</td>
+                        <td class="text-center">@order.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@order.CustomerName</td>
+                        <td>
+                            <ul class="list-unstyled mb-0">
+                                @foreach (var item in order.Items)
+                                {
+                                    <li>- <span class="text-primary fw-bold">@item.EquipmentName</span> (x @item.Quantity)</li>
+                                }
+                            </ul>
+                        </td>
+                        <td class="text-end text-danger fw-bold">@order.TotalAmount.ToString("N0") VNĐ</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
