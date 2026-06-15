@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SportEquipment.Mvc")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3e34b1aa08f3aed56ea9f7bf32c514be4991d60a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+37a932ba6176b2739aa1c2d120d15d5cfbd49e50")]
 [assembly: System.Reflection.AssemblyProductAttribute("SportEquipment.Mvc")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SportEquipment.Mvc")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

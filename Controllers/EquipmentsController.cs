@@ -2,53 +2,66 @@ using Microsoft.AspNetCore.Mvc;
 using SportEquipment.Mvc.Services;
 using SportEquipment.Mvc.ViewModels;
 
-namespace SportEquipment.Mvc.Controllers;
-
-public class EquipmentsController : Controller
+namespace SportEquipment.Mvc.Controllers
 {
-    private readonly EquipmentService _service;
-    public EquipmentsController(EquipmentService service) { _service = service; }
-
-    public IActionResult Index() 
+    public class EquipmentsController : Controller
     {
-        var data = _service.GetAll().Select(e => new EquipmentListItemViewModel 
-        { Id = e.Id, Code = e.Code, Name = e.Name, Brand = e.Brand, Price = e.Price, Quantity = e.Quantity }
-        ).ToList(); return View(data);
-    }
-    public IActionResult Detail(int id) 
-    { 
-        var eq = _service.GetById(id); 
-        if (eq == null) return NotFound($"Không tìm thấy dụng cụ ID {id}"); 
-        var vm = new EquipmentDetailViewModel 
-        { 
-            Id = eq.Id, Name = eq.Name, Brand = eq.Brand, Quantity = eq.Quantity, MinStock = eq.MinStock 
-        }; 
-        return View(vm);
-    }
-    public IActionResult Stats() { return View(_service.GetStats()); }
-    public IActionResult Welcome() { return Content("..."); }
-    public IActionResult EquipmentJson() { return Json(_service.GetAll()); }
-    public IActionResult GoToList() { return RedirectToAction(nameof(Index)); }
+        private readonly IEquipmentService _equipmentService;
 
-    // Các Action mới phải nằm trong cặp ngoặc nhọn của class EquipmentsController
-    [HttpGet]
-    public IActionResult Search(string? keyword, decimal? minPrice)
-    {
-        var results = _service.Search(keyword, minPrice).Select(e => new EquipmentListItemViewModel { Id = e.Id, Code = e.Code, Name = e.Name, Brand = e.Brand, Price = e.Price, Quantity = e.Quantity }).ToList();
-        var vm = new EquipmentSearchViewModel { Keyword = keyword ?? "", MinPrice = minPrice, Results = results };
-        return View(vm);
-    }
+        // Tiêm IEquipmentService vào Controller
+        public EquipmentsController(IEquipmentService equipmentService)
+        {
+            _equipmentService = equipmentService;
+        }
 
-    [HttpGet]
-    public IActionResult Create() { return View(new EquipmentCreateViewModel { Quantity = 1, MinStock = 1 }); }
+        // 1. Trang danh sách
+        public async Task<IActionResult> Index()
+        {
+            var data = await _equipmentService.GetEquipmentListAsync();
+            return View(data);
+        }
 
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public IActionResult Create(EquipmentCreateViewModel model)
-    {
-        if (!ModelState.IsValid) return View(model);
-        _service.Create(model);
-        TempData["SuccessMessage"] = $"Đã thêm dụng cụ '{model.Name}' thành công!";
-        return RedirectToAction(nameof(Index));
+        // 2. Chức năng Lọc / Tìm kiếm 
+        public async Task<IActionResult> Search(int? categoryId, decimal? minPrice, decimal? maxPrice, string? keyword)
+        {
+            var data = await _equipmentService.GetFilteredEquipmentsAsync(categoryId, minPrice, maxPrice, keyword);
+            return View(data); 
+        }
+
+        // 3. Xem chi tiết
+        public async Task<IActionResult> Detail(int id)
+        {
+            var equipment = await _equipmentService.GetByIdAsync(id);
+            if (equipment == null) return NotFound();
+            return View(equipment);
+        }
+
+        // 4. Thống kê
+        public async Task<IActionResult> Stats()
+        {
+            var stats = await _equipmentService.GetStatsAsync();
+            return View(stats);
+        }
+
+        // 5. Form tạo mới (GET)
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        // 6. Xử lý dữ liệu tạo mới (POST)
+        [HttpPost]
+        public async Task<IActionResult> Create(EquipmentCreateViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            await _equipmentService.CreateAsync(model);
+            TempData["SuccessMessage"] = "Thêm dụng cụ thể thao thành công!";
+            return RedirectToAction(nameof(Index));
+        }
     }
-} // <--- Dấu đóng này đóng class EquipmentsController
+}

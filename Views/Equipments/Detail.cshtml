@@ -1,13 +1,36 @@
-@model EquipmentDetailViewModel
+@model SportEquipment.Mvc.Models.Equipment
+
+@{
+    ViewData["Title"] = "Chi tiết thiết bị";
+    
+    // Tự động tính toán gợi ý dựa vào số lượng và hạn mức tối thiểu
+    string suggestion = "Tồn kho an toàn, chưa cần nhập thêm.";
+    if (Model.Quantity == 0)
+    {
+        suggestion = "Hết hàng! Cần liên hệ nhà cung cấp nhập thêm ngay lập tức.";
+    }
+    else if (Model.Quantity <= Model.MinStock)
+    {
+        suggestion = "Hàng sắp hết (dưới hạn mức tối thiểu). Hãy lên kế hoạch đặt hàng.";
+    }
+}
+
 <div class="container mt-4">
     <div class="card p-4 shadow-sm" style="max-width: 500px;">
         <h3 class="text-primary">@Model.Name</h3>
+        <p><strong>Mã thiết bị:</strong> @Model.Code</p>
         <p><strong>Thương hiệu:</strong> @Model.Brand</p>
+        <p><strong>Giá bán:</strong> <span class="text-danger fw-bold">@Model.Price.ToString("N0") VNĐ</span></p>
         <p><strong>Số lượng hiện tại:</strong> @Model.Quantity sản phẩm</p>
         <p><strong>Hạn mức tối thiểu:</strong> @Model.MinStock sản phẩm</p>
+        <p><strong>Danh mục:</strong> @(Model.Category?.Name ?? "Chưa phân loại")</p>
+        
         <div class="alert alert-secondary mt-3">
-            <strong>Gợi ý:</strong> @Model.Suggestion
+            <strong>Gợi ý:</strong> @suggestion
         </div>
-        <a href="/Equipments" class="btn btn-outline-secondary mt-2">Quay lại danh sách</a>
+        
+        <a href="/Equipments" class="btn btn-outline-secondary mt-2">
+            <i class="bi bi-arrow-left"></i> Quay lại danh sách
+        </a>
     </div>
 </div>

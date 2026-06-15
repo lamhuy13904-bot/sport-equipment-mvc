@@ -1,0 +1,61 @@
+@model SportEquipment.Mvc.ViewModels.DataHealthViewModel
+
+@{
+    ViewData["Title"] = "Kiểm tra hệ thống (Data Health)";
+}
+
+<h2 class="mb-4 text-primary">Trạng thái Hệ thống Dữ liệu (Data Health)</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-dark text-white fw-bold">
+                1. Kết nối Cơ sở dữ liệu (Database Connection)
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Trạng thái kết nối:
+                    @if (Model.CanConnectToDatabase)
+                    {
+                        <span class="badge bg-success rounded-pill px-3 py-2">Thành công</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger rounded-pill px-3 py-2">Thất bại</span>
+                    }
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Hệ quản trị CSDL (Provider):
+                    <span class="badge bg-info text-dark rounded-pill px-3 py-2">@Model.DatabaseProvider</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-dark text-white fw-bold">
+                2. Kiểm tra Seed Data & Migration
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Tổng số Danh mục:
+                    <span class="badge bg-primary rounded-pill">@Model.TotalCategories</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Tổng số Dụng cụ (Equipments):
+                    <span class="badge bg-primary rounded-pill">@Model.TotalEquipments</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Tổng số Đơn xuất kho (Orders):
+                    <span class="badge bg-warning text-dark rounded-pill">@Model.TotalOrders</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="alert alert-info mt-3 shadow-sm">
+    <strong><i class="bi bi-info-circle-fill"></i> Ghi chú kỹ thuật:</strong> 
+    Trang này sử dụng truy vấn <code>.AsNoTracking()</code> để đếm dữ liệu nhằm tối ưu hiệu năng bộ nhớ. Nó cũng kiểm tra xem EF Core đã chạy Migration và tạo Database thành công chưa thông qua hàm <code>CanConnectAsync()</code>.
+</div>
