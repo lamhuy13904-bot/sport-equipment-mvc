@@ -10,4 +10,6 @@ public class Equipment
     public int Quantity { get; set; }
     public int MinStock { get; set; }
     public DateTime LastRestocked { get; set; }
+    public int CategoryId { get; set; }
+    public Category? Category { get; set; }
 }
