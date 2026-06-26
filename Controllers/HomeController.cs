@@ -1,24 +1,31 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using SportEquipment.Mvc.Models;
+using Microsoft.EntityFrameworkCore;
+using SportEquipment.Mvc.Data;
 
-namespace SportEquipment.Mvc.Controllers;
-
-public class HomeController : Controller
+namespace SportEquipment.Mvc.Controllers
 {
-    public IActionResult Index()
+    public class HomeController : Controller
     {
-        return View();
-    }
+        private readonly AppDbContext _context;
 
-    public IActionResult Privacy()
-    {
-        return View();
-    }
+        public HomeController(AppDbContext context)
+        {
+            _context = context;
+        }
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        public async Task<IActionResult> Index()
+        {
+            // Dùng AsNoTracking và IgnoreQueryFilters để tối ưu hóa việc đếm dữ liệu
+            var totalEquipments = await _context.Equipments.IgnoreQueryFilters().AsNoTracking().CountAsync();
+            var activeEquipments = await _context.Equipments.AsNoTracking().CountAsync(); // Tự động lọc IsDeleted = false
+            var deletedEquipments = await _context.Equipments.IgnoreQueryFilters().AsNoTracking().CountAsync(e => e.IsDeleted);
+
+            // Truyền dữ liệu sang View bằng ViewBag
+            ViewBag.Total = totalEquipments;
+            ViewBag.Active = activeEquipments;
+            ViewBag.Deleted = deletedEquipments;
+
+            return View();
+        }
     }
 }

@@ -1,32 +1,42 @@
-@model List<EquipmentListItemViewModel>
+@model List<SportEquipment.Mvc.ViewModels.EquipmentListItemViewModel>
 @{
     ViewData["Title"] = "Danh mục thiết bị";
     var totalItems = Model.Count;
 }
 
-<div class="page-header">
+<div class="page-header d-flex justify-content-between align-items-center mb-3">
     <div>
-        <h2 class="page-title">Danh Mục Dụng Cụ Thể Thao</h2>
-        <p class="page-description">Giao diện danh sách được tổ chức lại bằng Layout và Partial View (Card).</p>
+        <h2 class="page-title text-primary fw-bold">Danh Mục Dụng Cụ Thể Thao</h2>
+        <p class="page-description text-muted">Giao diện danh sách (Chỉ hiển thị các sản phẩm đang hoạt động).</p>
     </div>
     <div>
-        <a class="btn btn-secondary" asp-controller="Equipments" asp-action="Search">Tìm kiếm</a>
-        <a class="btn" asp-controller="Equipments" asp-action="Create">Thêm mới</a>
+        <a class="btn btn-secondary fw-bold" asp-controller="Equipments" asp-action="Search">
+            <i class="bi bi-search"></i> Tìm kiếm
+        </a>
+        <a class="btn btn-success fw-bold" asp-controller="Equipments" asp-action="Create">
+            <i class="bi bi-plus-circle"></i> Thêm mới
+        </a>
     </div>
 </div>
 
+@* Khối hiển thị thông báo thành công (Chỉ để 1 lần duy nhất ở đây) *@
 @if (TempData["SuccessMessage"] != null)
 {
-    <div class="success-box">
-        @TempData["SuccessMessage"]
+    <div class="alert alert-success alert-dismissible fade show shadow-sm fw-bold mt-3" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 }
 
-<p style="margin-bottom: 20px; font-weight: bold; color: #475569;">Tổng số dụng cụ hiện có: @totalItems</p>
+<p style="margin-bottom: 20px; font-weight: bold; color: #475569;">
+    Tổng số dụng cụ hiện có: <span class="text-primary">@totalItems</span>
+</p>
 
 @if (Model.Count == 0)
 {
-    <p>Kho đang trống.</p>
+    <div class="alert alert-warning text-center fw-bold shadow-sm">
+        Kho đang trống hoặc tất cả dụng cụ đã bị đưa vào thùng rác.
+    </div>
 }
 else
 {
