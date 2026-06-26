@@ -1,0 +1,25 @@
+@model SportEquipment.Mvc.ViewModels.AdjustStockViewModel
+@{ ViewData["Title"] = "Kiểm Kho Nhanh"; }
+
+<h2 class="text-info mb-4 fw-bold"><i class="bi bi-box-seam"></i> Điều Chỉnh Tồn Kho</h2>
+<div class="card shadow-sm p-4" style="max-width: 500px;">
+    <form asp-action="AdjustStock" method="post">
+        <div asp-validation-summary="All" class="text-danger mb-3 fw-bold"></div>
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="RowVersion" />
+
+        <div class="mb-3">
+            <label class="form-label text-muted">Tên dụng cụ</label>
+            <input asp-for="Name" class="form-control fw-bold" readonly style="background-color: #e9ecef; cursor: not-allowed;" />
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label fw-bold text-primary">Số lượng tồn kho mới</label>
+            <input asp-for="Quantity" type="number" class="form-control form-control-lg border-primary" />
+            <span asp-validation-for="Quantity" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-info text-white fw-bold px-4">Lưu Số Lượng</button>
+        <a asp-action="Index" class="btn btn-secondary ms-2">Hủy</a>
+    </form>
+</div>
