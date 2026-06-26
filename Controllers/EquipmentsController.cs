@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SportEquipment.Mvc.Services;
 using SportEquipment.Mvc.ViewModels;
 
@@ -43,25 +44,128 @@ namespace SportEquipment.Mvc.Controllers
             return View(stats);
         }
 
-        // 5. Form tạo mới (GET)
         [HttpGet]
         public IActionResult Create()
         {
-            return View();
+            return View(new EquipmentCreateViewModel());
         }
 
-        // 6. Xử lý dữ liệu tạo mới (POST)
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(EquipmentCreateViewModel model)
         {
-            if (!ModelState.IsValid)
+            // Kiểm tra xem dữ liệu nhập vào có vi phạm các ràng buộc (Data Annotations) không
+            if (!ModelState.IsValid) return View(model);
+
+            // Kiểm tra trùng Code (Custom Validation)
+            bool isUnique = await _equipmentService.IsCodeUniqueAsync(model.Code);
+            if (!isUnique)
             {
+                ModelState.AddModelError("Code", "Mã thiết bị (Code) này đã tồn tại trong hệ thống.");
                 return View(model);
             }
 
             await _equipmentService.CreateAsync(model);
-            TempData["SuccessMessage"] = "Thêm dụng cụ thể thao thành công!";
+            TempData["SuccessMessage"] = "Đã thêm dụng cụ thành công.";
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var model = await _equipmentService.GetEquipmentForEditAsync(id);
+            if (model == null) return NotFound();
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, EquipmentEditViewModel model)
+        {
+            if (id != model.Id) return NotFound();
+            
+            if (!ModelState.IsValid) return View(model);
+
+            // Kiểm tra mã Code có bị trùng với sản phẩm KHÁC không
+            bool isUnique = await _equipmentService.IsCodeUniqueAsync(model.Code, model.Id);
+            if (!isUnique)
+            {
+                ModelState.AddModelError("Code", "Mã thiết bị (Code) này đã được sử dụng.");
+                return View(model);
+            }
+
+            try
+            {
+                await _equipmentService.UpdateEquipmentAsync(model);
+                TempData["SuccessMessage"] = "Cập nhật thông tin thành công.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                // Bắt lỗi khi 2 admin cùng sửa 1 sản phẩm
+                ModelState.AddModelError(string.Empty, "Dữ liệu đã được người khác cập nhật. Vui lòng tải lại trang và thử lại.");
+                return View(model);
+            }
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var success = await _equipmentService.SoftDeleteAsync(id);
+            if (!success) return NotFound();
+
+            TempData["SuccessMessage"] = "Đã đưa dụng cụ vào thùng rác.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        // Mở trang Thùng rác
+        [HttpGet]
+        public async Task<IActionResult> Trash()
+        {
+            var trashItems = await _equipmentService.GetTrashAsync();
+            return View(trashItems);
+        }
+
+        // Khôi phục dữ liệu
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Restore(int id)
+        {
+            var success = await _equipmentService.RestoreAsync(id);
+            if (!success) return NotFound();
+
+            TempData["SuccessMessage"] = "Đã khôi phục dụng cụ thành công.";
+            return RedirectToAction(nameof(Trash));
+        }
+
+        // 7. Chỉnh sua số lượng sản phẩm (Adjust Stock)
+        [HttpGet]
+        public async Task<IActionResult> AdjustStock(int id)
+        {
+            var model = await _equipmentService.GetEquipmentForAdjustStockAsync(id);
+            if (model == null) return NotFound();
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AdjustStock(int id, AdjustStockViewModel model)
+        {
+            if (id != model.Id) return NotFound();
+            if (!ModelState.IsValid) return View(model);
+
+            try
+            {
+                await _equipmentService.AdjustStockAsync(model);
+                TempData["SuccessMessage"] = "Điều chỉnh số lượng tồn kho thành công.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                ModelState.AddModelError(string.Empty, "Số lượng đã được người khác cập nhật. Vui lòng tải lại trang và thử lại.");
+                return View(model);
+            }
         }
     }
 }

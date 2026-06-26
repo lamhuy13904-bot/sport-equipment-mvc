@@ -1,8 +1,41 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<h2 class="fw-bold mb-4">Admin Dashboard</h2>
+
+<div class="row text-white">
+    <div class="col-md-4 mb-3">
+        <div class="card bg-primary shadow h-100 p-3">
+            <h5 class="card-title">Tổng Dụng Cụ</h5>
+            <h1 class="display-4 fw-bold">@ViewBag.Total</h1>
+            <small>Tất cả sản phẩm trong DB</small>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-3">
+        <div class="card bg-success shadow h-100 p-3">
+            <h5 class="card-title">Đang Hoạt Động</h5>
+            <h1 class="display-4 fw-bold">@ViewBag.Active</h1>
+            <small>IsDeleted = false</small>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <div class="card bg-danger shadow h-100 p-3">
+            <h5 class="card-title">Đã Xóa (Thùng Rác)</h5>
+            <h1 class="display-4 fw-bold">@ViewBag.Deleted</h1>
+            <small>Có thể khôi phục</small>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm mt-4 p-4">
+    <h4 class="fw-bold text-secondary">Truy Cập Nhanh (Lab 05 Features)</h4>
+    <div class="d-flex flex-wrap gap-2 mt-3">
+        <a asp-controller="Equipments" asp-action="Index" class="btn btn-outline-primary">Danh sách sản phẩm</a>
+        <a asp-controller="Equipments" asp-action="Trash" class="btn btn-outline-danger">Mở thùng rác</a>
+        <a href="/health/ready" class="btn btn-outline-success" target="_blank">Kiểm tra Health (JSON)</a>
+        <a href="/api/equipments/9999" class="btn btn-outline-warning" target="_blank">Test API Error 404</a>
+    </div>
 </div>

@@ -1,22 +1,30 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace SportEquipment.Mvc.ViewModels;
-
-public class EquipmentCreateViewModel
+namespace SportEquipment.Mvc.ViewModels
 {
-    [Required(ErrorMessage = "Tên dụng cụ không được để trống")]
-    [StringLength(100, ErrorMessage = "Tên không quá 100 ký tự")]
-    public string Name { get; set; } = "";
+    public class EquipmentCreateViewModel
+    {
+        [Required(ErrorMessage = "Tên dụng cụ là bắt buộc.")]
+        [StringLength(150, MinimumLength = 3, ErrorMessage = "Tên phải từ 3 đến 150 ký tự.")]
+        public string Name { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "Thương hiệu không được để trống")]
-    public string Brand { get; set; } = "";
+        [Required(ErrorMessage = "Mã thiết bị (Code) là bắt buộc.")]
+        [RegularExpression(@"^[A-Z0-9\-]+$", ErrorMessage = "Mã chỉ gồm chữ in hoa, số và dấu '-'.")]
+        public string Code { get; set; } = string.Empty;
 
-    [Range(10000, 50000000, ErrorMessage = "Giá bán phải từ 10.000 đến 50.000.000 VND")]
-    public decimal Price { get; set; }
+        [Required(ErrorMessage = "Thương hiệu là bắt buộc.")]
+        public string Brand { get; set; } = string.Empty;
 
-    [Range(0, 5000, ErrorMessage = "Số lượng không hợp lệ (0 - 5000)")]
-    public int Quantity { get; set; }
+        [Range(1000, 100000000, ErrorMessage = "Giá phải từ 1.000 đến 100.000.000 VNĐ.")]
+        public decimal Price { get; set; }
 
-    [Range(0, 1000, ErrorMessage = "Mức tồn tối thiểu không hợp lệ")]
-    public int MinStock { get; set; }
+        [Range(0, 10000, ErrorMessage = "Số lượng phải từ 0 đến 10.000.")]
+        public int Quantity { get; set; }
+
+        [Range(0, 1000, ErrorMessage = "Mức tối thiểu phải từ 0 đến 1000.")]
+        public int MinStock { get; set; }
+
+        [Required(ErrorMessage = "Vui lòng chọn danh mục.")]
+        public int CategoryId { get; set; }
+    }
 }

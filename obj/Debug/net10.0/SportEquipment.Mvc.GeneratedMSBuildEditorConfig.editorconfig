@@ -34,12 +34,20 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGF0YUhlYWx0aFxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/lamhu/Desktop/Web_asp.net-core/SportEquipment.Mvc/Views/Equipments/AdjustStock.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRXF1aXBtZW50c1xBZGp1c3RTdG9jay5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/lamhu/Desktop/Web_asp.net-core/SportEquipment.Mvc/Views/Equipments/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRXF1aXBtZW50c1xDcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/lamhu/Desktop/Web_asp.net-core/SportEquipment.Mvc/Views/Equipments/Detail.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRXF1aXBtZW50c1xEZXRhaWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/lamhu/Desktop/Web_asp.net-core/SportEquipment.Mvc/Views/Equipments/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRXF1aXBtZW50c1xFZGl0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/lamhu/Desktop/Web_asp.net-core/SportEquipment.Mvc/Views/Equipments/Index.cshtml]
@@ -52,6 +60,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/lamhu/Desktop/Web_asp.net-core/SportEquipment.Mvc/Views/Equipments/Stats.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRXF1aXBtZW50c1xTdGF0cy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/lamhu/Desktop/Web_asp.net-core/SportEquipment.Mvc/Views/Equipments/Trash.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRXF1aXBtZW50c1xUcmFzaC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/lamhu/Desktop/Web_asp.net-core/SportEquipment.Mvc/Views/Home/Index.cshtml]

@@ -1,0 +1,53 @@
+@model List<SportEquipment.Mvc.ViewModels.EquipmentTrashItemViewModel>
+
+@{
+    ViewData["Title"] = "Thùng Rác";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-danger fw-bold"><i class="bi bi-trash"></i> Thùng Rác (Đã Xóa Mềm)</h2>
+    <a asp-action="Index" class="btn btn-outline-primary fw-bold">Quay lại Danh sách</a>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success fw-bold">@TempData["SuccessMessage"]</div>
+}
+
+@if (!Model.Any())
+{
+    <div class="alert alert-secondary text-center">Thùng rác hiện đang trống.</div>
+}
+else
+{
+    <div class="table-responsive shadow-sm rounded">
+        <table class="table table-hover table-bordered bg-white align-middle text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>Mã Dụng Cụ (Code)</th>
+                    <th>Tên Dụng Cụ</th>
+                    <th>Ngày Xóa</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="fw-bold">@item.Code</td>
+                        <td>@item.Name</td>
+                        <td>@item.DeletedAt?.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                        <td>
+                            @* Form Khôi phục (Restore) *@
+                            <form asp-action="Restore" asp-route-id="@item.Id" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-success fw-bold" onclick="return confirm('Bạn có chắc chắn muốn khôi phục dụng cụ này?');">
+                                    Khôi phục
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

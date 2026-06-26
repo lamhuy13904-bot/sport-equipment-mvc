@@ -20,6 +20,10 @@ namespace SportEquipment.Mvc.Data
             modelBuilder.Entity<Equipment>().Property(e => e.Price).HasColumnType("decimal(18,2)");
             modelBuilder.Entity<OrderItem>().Property(o => o.UnitPrice).HasColumnType("decimal(18,2)");
             modelBuilder.Entity<Order>().Property(o => o.TotalAmount).HasColumnType("decimal(18,2)");
+            // 1. Cấu hình RowVersion cho Concurrency Check
+            modelBuilder.Entity<Equipment>().Property(e => e.RowVersion).IsRowVersion();
+            // 2. Global Query Filter: Tự động loại bỏ các sản phẩm đã xóa mềm (IsDeleted = true)
+            modelBuilder.Entity<Equipment>().HasQueryFilter(e => !e.IsDeleted);
 
             // Seed Data mẫu
             modelBuilder.Entity<Category>().HasData(
@@ -29,9 +33,9 @@ namespace SportEquipment.Mvc.Data
             );
 
             modelBuilder.Entity<Equipment>().HasData(
-                new Equipment { Id = 1, Code = "SHOE-NK-01", Name = "Nike Air Zoom Pegasus", Price = 3200000, Quantity = 12, CategoryId = 1 },
-                new Equipment { Id = 2, Code = "BALL-AD-01", Name = "Adidas Al Rihla Pro", Price = 2500000, Quantity = 3, CategoryId = 2 },
-                new Equipment { Id = 3, Code = "DUMB-10KG", Name = "Tạ tay cao su 10kg", Price = 450000, Quantity = 0, CategoryId = 3 }
+                new Equipment { Id = 1, Code = "SHOE-NK-01", Name = "Nike Air Zoom Pegasus", Price = 3200000, Quantity = 12, CategoryId = 1, CreatedAt = new DateTime(2026, 1, 1), IsDeleted = false, RowVersion = Array.Empty<byte>() },
+                new Equipment { Id = 2, Code = "BALL-AD-01", Name = "Adidas Al Rihla Pro", Price = 2500000, Quantity = 3, CategoryId = 2, CreatedAt = new DateTime(2026, 1, 1), IsDeleted = false, RowVersion = Array.Empty<byte>() },
+                new Equipment { Id = 3, Code = "DUMB-10KG", Name = "Tạ tay cao su 10kg", Price = 450000, Quantity = 0, CategoryId = 3, CreatedAt = new DateTime(2026, 1, 1), IsDeleted = false, RowVersion = Array.Empty<byte>() }
             );
         }
     }

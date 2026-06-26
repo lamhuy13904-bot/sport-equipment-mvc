@@ -29,8 +29,24 @@
             <strong>Gợi ý:</strong> @suggestion
         </div>
         
-        <a href="/Equipments" class="btn btn-outline-secondary mt-2">
-            <i class="bi bi-arrow-left"></i> Quay lại danh sách
-        </a>
+        <div class="d-flex gap-2 mt-4">
+            @* Nút Sửa *@
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning fw-bold">
+                <i class="bi bi-pencil-square"></i> Chỉnh sửa
+            </a>
+            
+            @* Nút Xóa Mềm *@
+            <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+                <button type="submit" class="btn btn-danger fw-bold" onclick="return confirm('Bạn có chắc chắn muốn xóa (đưa vào thùng rác) dụng cụ này?');">
+                    <i class="bi bi-trash"></i> Xóa
+                </button>
+            </form>
+
+            @* Nút Quay lại *@
+            <a asp-action="Index" class="btn btn-outline-secondary">Quay lại danh sách</a>
+            
+            @* Nút Kiểm Kho Nhanh *@
+            <a asp-action="AdjustStock" asp-route-id="@Model.Id" class="btn btn-info text-white fw-bold">Kiểm Kho</a>
+        </div>
     </div>
 </div>
