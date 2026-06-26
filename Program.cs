@@ -3,7 +3,28 @@ using SportEquipment.Mvc.Data;
 using SportEquipment.Mvc.Options;
 using SportEquipment.Mvc.Repositories;
 using SportEquipment.Mvc.Services;
+using Serilog;
 var builder = WebApplication.CreateBuilder(args);
+
+// Cấu hình Serilog tự động ghi ra file txt mỗi ngày
+builder.Host.UseSerilog((context, services, configuration) => configuration
+    .ReadFrom.Configuration(context.Configuration)
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .WriteTo.File("logs/SportHub-Log-.txt", rollingInterval: RollingInterval.Day));
+
+// Đăng ký ProblemDetails cho API
+builder.Services.AddProblemDetails(options => {
+    options.CustomizeProblemDetails = context => {
+        context.ProblemDetails.Extensions["traceId"] = context.HttpContext.TraceIdentifier;
+        context.ProblemDetails.Extensions["timestamp"] = DateTimeOffset.UtcNow;
+    };
+});
+
+// Đăng ký Health Check (Kiểm tra app và database)
+builder.Services.AddHealthChecks()
+    .AddCheck("self", () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy("Application is running."), tags: new[] { "live" })
+    .AddDbContextCheck<SportEquipment.Mvc.Data.AppDbContext>("database", tags: new[] { "ready" });
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -43,5 +64,26 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+// Kích hoạt đường dẫn /health/live và /health/ready
+app.MapHealthChecks("/health/live", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions {
+    Predicate = check => check.Tags.Contains("live")
+});
+app.MapHealthChecks("/health/ready", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions {
+    Predicate = check => check.Tags.Contains("ready")
+});
+
+// Tạo API test lỗi ProblemDetails
+app.MapGet("/api/equipments/{id:int}", async (int id, SportEquipment.Mvc.Data.AppDbContext db, HttpContext http) => {
+    var equipment = await db.Equipments.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
+    if (equipment == null) {
+        return Results.Problem(
+            type: "https://example.com/problems/equipment-not-found",
+            title: "Equipment not found",
+            detail: $"Dụng cụ với ID {id} không tồn tại.",
+            statusCode: StatusCodes.Status404NotFound,
+            instance: http.Request.Path);
+    }
+    return Results.Ok(equipment);
+});
 
 app.Run();
